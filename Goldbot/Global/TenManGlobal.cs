@@ -2,8 +2,8 @@
 using Discord.WebSocket;
 using System.Collections.Generic;
 
-namespace Goldbot {
-    internal static class Global {
+namespace Goldbot.Global {
+    internal static class TenManGlobal {
         internal static GameStateListener gsl { get; set; }
         internal static List<SocketGuildUser> participants { get; set; }
         internal static Dictionary<string, string> mapThumbnails { get; set; }
