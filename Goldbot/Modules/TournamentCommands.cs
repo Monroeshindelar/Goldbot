@@ -148,6 +148,15 @@ namespace Goldbot.Modules {
             Console.WriteLine(response.Content);
         }
 
+        [Command("reset_tournament")]
+        public async Task ResetTournament([Remainder]string args) {
+            if (TournamentGlobal.client == null) InitTournamentVariables();
+
+            var request = InitRequestWithApiKey($"tournaments/{args}/reset", Method.POST);
+            IRestResponse response = TournamentGlobal.client.Execute(request);
+            Console.WriteLine(response.Content);
+        }
+
         [Command("delete_tournament")]
         public async Task DeleteTournament([Remainder]string args) {
             if (TournamentGlobal.client == null) InitTournamentVariables();
@@ -162,6 +171,8 @@ namespace Goldbot.Modules {
         }
 
         private RestRequest InitRequestWithApiKey(string url, Method method) {
+            var data = Helper.readIni("challonge.config");
+            TournamentGlobal.api_key = data["api_key"];
             RestRequest request = new RestRequest(url, method);
             request.AddParameter("api_key", TournamentGlobal.api_key);
             return request;
