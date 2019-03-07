@@ -171,7 +171,7 @@ namespace Goldbot.Modules {
         }
 
         private RestRequest InitRequestWithApiKey(string url, Method method) {
-            var data = Helper.readIni("challonge.config");
+            var data = Helper.readIni("D:\\Documents\\challonge.config");
             TournamentGlobal.api_key = data["api_key"];
             RestRequest request = new RestRequest(url, method);
             request.AddParameter("api_key", TournamentGlobal.api_key);
