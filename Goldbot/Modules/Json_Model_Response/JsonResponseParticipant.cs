@@ -1,7 +1,7 @@
-﻿using Goldbot.Modules.Model_Tournament;
+﻿using Goldbot.Modules.Model.Tournament;
 
 namespace Goldbot.Modules.Json_Model_Response {
     public class JsonResponseParticipant {
-        public ChallongeParticipant participant { get; set; }
+        public Participant participant { get; set; }
     }
 }

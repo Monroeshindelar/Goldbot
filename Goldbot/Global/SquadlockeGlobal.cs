@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Goldbot.Global {
-    class SquadlockeGlobal {
+    internal static class SquadlockeGlobal {
+        internal static string participantRoleName { get; set; }
+        internal static string currentTournamentName { get; set; }
+        internal static Dictionary<string, bool> ready { get; set; }
     }
 }

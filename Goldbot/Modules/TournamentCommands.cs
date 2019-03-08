@@ -6,12 +6,15 @@ using System;
 using Goldbot.Modules.Json_Model_Response;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Goldbot.Modules.Model_Tournament;
+using Goldbot.Modules.Model.Tournament;
 using Discord;
 
 namespace Goldbot.Modules {
     public class TournamentCommands : ModuleBase<SocketCommandContext> {
 
+        //TODO: Add a lot more customizability for creating tournaments
+        //      Maybe read from a config with a flag
+        //      Add error handeling for a bunch of stuff
         [Command("tournament_create")]
         public async Task CreateTournament([Remainder]string args) {
             if (TournamentGlobal.client == null) InitTournamentVariables();
@@ -25,6 +28,14 @@ namespace Goldbot.Modules {
             else
                 request.AddParameter("tournament[url]", tokens[0]);
 
+            request.AddParameter("tournament[tournament_type]", "swiss");
+
+            if (tokens.Length > 1) {
+                for (int i = 2; i < tokens.Length; i++) {
+                    string[] newParam = tokens[i].Split('=');
+                    request.AddParameter($"tournament[{newParam[0]}]", newParam[1]);
+                }
+            }
             IRestResponse response = TournamentGlobal.client.Execute(request);
             Console.WriteLine(response.Content);
         }
@@ -34,14 +45,21 @@ namespace Goldbot.Modules {
             if (TournamentGlobal.client == null) InitTournamentVariables();
 
             string[] tokens = args.Split(' ');
+            string makeName = "";
 
-            var request = InitRequestWithApiKey($"tournaments/{tokens[1]}/participants", Method.POST);
+            for (int i = 0; i < tokens.Length - 2; i++)
+                makeName += tokens[i] + " ";
+
+            makeName.TrimEnd(new char[] { ' ' });
+
+            var request = InitRequestWithApiKey($"tournaments/{tokens[tokens.Length - 1]}/participants", Method.POST);
             request.AddParameter("participant[name]", tokens[0]);
 
             IRestResponse response = TournamentGlobal.client.Execute(request);
             Console.WriteLine(response.Content);
         }
-
+        //TODO: Probably get rid of this or fix it
+        //      Doesnt add the last participant
         [Command("add_participants")]
         public async Task AddParticipants([Remainder]string args) {
             if (TournamentGlobal.client == null) InitTournamentVariables();
@@ -74,7 +92,7 @@ namespace Goldbot.Modules {
                 = JsonConvert.DeserializeObject<List<JsonResponseMatch>>(response.Content);
 
             foreach (JsonResponseMatch deserialized in deserialize) {
-                ChallongeMatch match = deserialized.Match;
+                Match match = deserialized.match;
 
                 string desc = $"{GetParticipantNameById(match.player1_id, args)} vs. {GetParticipantNameById(match.player2_id, args)}";
                 EmbedBuilder embed = Helper.EmbedHelper("Upcoming Match", desc, null, new Color(0, 255, 0));
@@ -171,11 +189,64 @@ namespace Goldbot.Modules {
         }
 
         private RestRequest InitRequestWithApiKey(string url, Method method) {
-            var data = Helper.readIni("D:\\Documents\\challonge.config");
+            var data = Helper.readIni(Global.Global.configPath);
             TournamentGlobal.api_key = data["api_key"];
             RestRequest request = new RestRequest(url, method);
             request.AddParameter("api_key", TournamentGlobal.api_key);
             return request;
+        }
+
+
+        public Tournament GetTournamentByName(string tournamentName) {
+            Tournament retVal = null;
+
+            tournamentName = tournamentName.ToLower();
+
+            var request = InitRequestWithApiKey($"tournaments", Method.GET);
+
+            IRestResponse response = TournamentGlobal.client.Execute(request);
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+
+            List<JsonResponseTournament> deserialize
+                = JsonConvert.DeserializeObject<List<JsonResponseTournament>>(response.Content, jsonSerializerSettings);
+
+            foreach(JsonResponseTournament deserialized in deserialize) {
+                Tournament tournament = deserialized.tournament;
+                string currentName = tournament.name.ToLower();
+
+                if(currentName.Equals(tournamentName)) {
+                    retVal = tournament;
+                    break;
+                }
+            }
+            return retVal;
+        }
+
+        public Participant GetParticipantByName(string participantName, string tournamentName) {
+            Participant retVal = null;
+
+            participantName = participantName.ToLower();
+
+            var request = InitRequestWithApiKey($"tournaments/{tournamentName}/participants", Method.GET);
+
+            IRestResponse response = TournamentGlobal.client.Execute(request);
+
+            List<JsonResponseParticipant> deserialize
+                = JsonConvert.DeserializeObject<List<JsonResponseParticipant>>(response.Content);
+
+            foreach (JsonResponseParticipant deserialized in deserialize) {
+                Participant participant = deserialized.participant;
+                string currentName = participant.name.ToLower();
+
+                if (currentName.Equals(participantName)) {
+                    retVal = participant;
+                    break; 
+                }
+            }
+
+            return retVal;
         }
 
         private int GetParticipantIdByName(string participantName, string tournamentName) {
@@ -190,7 +261,7 @@ namespace Goldbot.Modules {
                 = JsonConvert.DeserializeObject<List<JsonResponseParticipant>>(response.Content);
 
             foreach (JsonResponseParticipant deserialized in deserialize) {
-                ChallongeParticipant participant = deserialized.participant;
+                Participant participant = deserialized.participant;
                 string currentName = participant.name.ToLower();
 
                 if (currentName.Equals(participantName)) {
@@ -198,7 +269,6 @@ namespace Goldbot.Modules {
                     break;
                 }
             }
-            Console.WriteLine($"ID: {id}");
             return id;
         }
 
@@ -213,7 +283,7 @@ namespace Goldbot.Modules {
                 = JsonConvert.DeserializeObject<List<JsonResponseParticipant>>(response.Content);
 
             foreach (JsonResponseParticipant deserialized in deserialize) {
-                ChallongeParticipant participant = deserialized.participant;
+                Participant participant = deserialized.participant;
                 if(participant.id == id) {
                     name = participant.name;
                     break;
@@ -235,7 +305,7 @@ namespace Goldbot.Modules {
                 = JsonConvert.DeserializeObject<List<JsonResponseMatch>>(response.Content);
 
             foreach(JsonResponseMatch deserialized in deserialize) {
-                ChallongeMatch match = deserialized.Match;
+                Match match = deserialized.match;
                 if(p1Id == match.player1_id && p2Id == match.player2_id){
                     matchId = match.id;
                     break;

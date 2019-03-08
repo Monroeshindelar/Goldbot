@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace Goldbot.Modules.Model_Tournament {
-    public class ChallongeMatch {
+namespace Goldbot.Modules.Model.Tournament {
+    public class Match {
         public int id { get; set; }
         public int tournament_id { get; set; }
         public string state { get; set; }

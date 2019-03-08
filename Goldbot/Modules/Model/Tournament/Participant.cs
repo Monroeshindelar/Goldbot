@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Goldbot.Modules.Model_Tournament {
-    public class ChallongeParticipant {
+namespace Goldbot.Modules.Model.Tournament {
+    public class Participant {
         [JsonProperty(PropertyName = "id")]
         public int id { get; set; }
         [JsonProperty(PropertyName = "tournament_id")]
