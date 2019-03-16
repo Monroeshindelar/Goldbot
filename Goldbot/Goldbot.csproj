@@ -153,16 +153,22 @@
     <Compile Include="Core\DataStorage.cs" />
     <Compile Include="Core\UserAccounts\UserAccount.cs" />
     <Compile Include="Core\UserAccounts\UserAccounts.cs" />
+    <Compile Include="DataStorage\DataStorage.cs" />
+    <Compile Include="DataStorage\SquadlockeDataStorage.cs" />
+    <Compile Include="DataStorage\SquadlockePersistentDataObject.cs" />
     <Compile Include="Global\Global.cs" />
-    <Compile Include="Global\Helper.cs" />
     <Compile Include="Global\SquadlockeGlobal.cs" />
     <Compile Include="Global\TournamentGlobal.cs" />
+    <Compile Include="Modules\CommandHelpers\SquadlockeHelper.cs" />
+    <Compile Include="Modules\CommandHelpers\TournamentHelper.cs" />
+    <Compile Include="Modules\Json_Model_Response\JsonResponseError.cs" />
     <Compile Include="Modules\Json_Model_Response\JsonResponseMatch.cs" />
     <Compile Include="Modules\Json_Model_Response\JsonResponseParticipant.cs" />
     <Compile Include="Modules\Json_Model_Response\JsonResponseTournament.cs" />
-    <Compile Include="Modules\Model\Tournament\Match.cs" />
-    <Compile Include="Modules\Model\Tournament\Participant.cs" />
-    <Compile Include="Modules\Model\Tournament\Tournament.cs" />
+    <Compile Include="Modules\Model\Challonge\Error.cs" />
+    <Compile Include="Modules\Model\Challonge\Match.cs" />
+    <Compile Include="Modules\Model\Challonge\Participant.cs" />
+    <Compile Include="Modules\Model\Challonge\Tournament.cs" />
     <Compile Include="Modules\SquadLockeCommands.cs" />
     <Compile Include="Modules\TenManCommands.cs" />
     <Compile Include="Modules\TournamentCommands.cs" />
@@ -178,6 +184,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Modules\Model\PokeAPI\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

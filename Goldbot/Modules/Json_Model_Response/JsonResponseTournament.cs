@@ -1,4 +1,4 @@
-﻿using Goldbot.Modules.Model.Tournament;
+﻿using Goldbot.Modules.Model.Challonge;
 
 namespace Goldbot.Modules.Json_Model_Response {
     public class JsonResponseTournament {

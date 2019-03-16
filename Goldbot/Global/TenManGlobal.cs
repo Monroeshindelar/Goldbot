@@ -1,10 +1,8 @@
-﻿using CSGSI;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using System.Collections.Generic;
 
 namespace Goldbot.Global {
     internal static class TenManGlobal {
-        internal static GameStateListener gsl { get; set; }
         internal static List<SocketGuildUser> participants { get; set; }
         internal static Dictionary<string, string> mapThumbnails { get; set; }
         internal static Dictionary<string, bool> PickBanTracker { get; set; }

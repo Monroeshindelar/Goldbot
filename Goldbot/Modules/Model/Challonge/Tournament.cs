@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Goldbot.Modules.Model.Tournament {
+namespace Goldbot.Modules.Model.Challonge {
     public class Tournament {
         public int id { get; set; }
         public string name { get; set; }

@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CSGSI;
-using CSGSI.Nodes;
-
 
 namespace Goldbot.Modules {
     public class TenManCommands : ModuleBase<SocketCommandContext> {
@@ -301,31 +298,9 @@ namespace Goldbot.Modules {
                         await Context.Channel.SendMessageAsync("Map pick/ban phase is completed.\nJoin your respective voice channels and begin the game!");
                     }
                     break;
-                case "startgsl":
-                case "startgamestatelistener":
-                    Global.TenManGlobal.gsl = new GameStateListener("http://localhost:3000");
-                    Global.TenManGlobal.gsl.NewGameState += new NewGameStateHandler(OnNewGameState);
-                    if (!Global.TenManGlobal.gsl.Start()) {
-                        Console.WriteLine("Failed to listen to the game");
-                        return;
-                    }
-                    Console.WriteLine("Listening...");
-                    break;
                 default:
                     await Context.Channel.SendMessageAsync("Command is not recognized.");
                     break;
-            }
-        }
-
-        void OnNewGameState(GameState gs) {
-            if(gs.Map.TeamCT.Score == 16 || gs.Map.TeamT.Score == 16 ||
-                (gs.Map.TeamCT.Score == 15 && gs.Map.TeamT.Score == 15)) {
-                foreach (var player in gs.AllPlayers) {
-                    Console.WriteLine(player.Name);
-                    Console.WriteLine(player.SteamID);
-                    Console.WriteLine(player.MatchStats.Kills);
-                    Console.WriteLine(player.MatchStats.Deaths);
-                }
             }
         }
 

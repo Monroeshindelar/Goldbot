@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Goldbot.Core.UserAccounts {
-    class UserAccount {
-        public int Id { get; set; }
-
-
+﻿namespace Goldbot.Core.UserAccounts {
+    public class UserAccount {
+        public ulong id { get; set; }
+        public string name { get; set; }
+        public string friendCode { get; set; }
+        public string streamProfile { get; set; }
     }
 }
