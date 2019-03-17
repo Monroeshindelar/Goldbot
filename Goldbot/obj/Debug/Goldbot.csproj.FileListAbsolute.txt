@@ -47,9 +47,10 @@ d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\Microsoft.Ext
 d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.Collections.Immutable.xml
 d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.Diagnostics.DiagnosticSource.xml
 d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.Interactive.Async.xml
-d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\CSGSI.dll
-d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\CSGSI.xml
 d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.Net.Http.Formatting.dll
 d:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.Net.Http.Formatting.xml
 D:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\RestSharp.dll
 D:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\RestSharp.xml
+D:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\PokeApi.NET.dll
+D:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\System.ValueTuple.dll
+D:\Documents\Visual Studio 2017\Projects\Goldbot\Goldbot\bin\Debug\PokeApi.NET.xml

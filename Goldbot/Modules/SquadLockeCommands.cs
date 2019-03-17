@@ -16,7 +16,7 @@ namespace Goldbot.Modules {
         [Command("sl_init")]
         public async Task SquadlockeInit([Remainder]string args = null) {
             string stringBuilder = "Welcome to the Pokemon Sword and Shield Squadlocke!\nThe First checkpoint has been set up.\n";
-            SquadlockeGlobal.ready = new Dictionary<string, bool>();
+            //SquadlockeGlobal.ready = new Dictionary<string, bool>();
             string[] tokens;
             if (args != null) tokens = args.Split(' ');
             else tokens = new string[]{ "PersistentDataTestForSL" };
@@ -26,77 +26,51 @@ namespace Goldbot.Modules {
             SquadlockeGlobal.participantRoleName = data["participant_role"];
             SocketRole participantRole = Context.Guild.Roles.First(x => x.Name == SquadlockeGlobal.participantRoleName);
 
-            SquadlockeGlobal.currentTournamentName = tokens[0];
+            //SquadlockeGlobal.currentTournamentName = tokens[0];
 
-            Tournament t = TournamentHelper.CreateTournament(SquadlockeGlobal.currentTournamentName);
-            SquadlockeGlobal.currentTournament = t;
+            Tournament t = TournamentHelper.CreateTournament(tokens[0]);
+            //SquadlockeGlobal.currentTournament = t;
 
             List<string> pList = new List<string>();
 
             foreach(SocketGuildUser user in Context.Guild.Users) {
-                if(user.Roles.Contains(participantRole)) {
+                if(user.Roles.Contains(participantRole))
                     pList.Add(user.Username);
-                    SquadlockeGlobal.ready.Add(user.Username, false);
-                }
             }
 
-            SquadlockeHelper.InitializeSquadlocke(SquadlockeGlobal.currentTournamentName, pList);
+            SquadlockeHelper.InitializeSquadlocke(tokens[0], pList);
 
             stringBuilder += $"Squadlocke info:\n# of participants: {t.participants_count}\nTournament Type: {t.tournament_type}\nCurrent checkpoint URL: {t.full_challonge_url}";
 
             RestUserMessage startLocke = await Context.Channel.SendMessageAsync(stringBuilder);
-            SquadlockeDataStorage.SaveData();
-            //Tournament T = TournamentHelper.GetTournamentByName(SquadlockeGlobal.currentTournamentName);
-            //SquadlockeGlobal.currentTournament = T;
-
-            //string message = "Welcome to the Pokemon Sword and Shield Squadlocke!\nThe First checkpoint has been set up.\n";
-            //string participants = "";
-
-            //List<string> pList = new List<string>();
-
-            //foreach (SocketGuildUser user in Context.Guild.Users) {
-            //    if (user.Roles.Contains(participantRole)) {
-            //        //TournamentHelper.AddParticipantsToTournament(user.Username, T);
-            //        participants += $"{user.Username}, ";
-            //        pList.Add(user.Username);
-            //        SquadlockeGlobal.ready.Add(user.Username, false); 
-            //    }
-            //}
-
-            //TournamentHelper.AddParticipantsToTournament(pList, SquadlockeGlobal.currentTournament);
-
-            //participants = participants.TrimEnd(new char[] { ',' });
-
-            //Tournament t = TournamentHelper.GetTournamentByName(SquadlockeGlobal.currentTournamentName);
-            //message += $"Squadlocke info:\n# of participants: {t.participants_count}\nParticipants: {participants}\nTournament Type: {t.tournament_type}\nCurrent checkpoint URL: {t.full_challonge_url}";
-
-            //RestUserMessage startLocke = await Context.Channel.SendMessageAsync(message);
-
-            //TournamentHelper.ShuffleSeeds(t);
-            //SquadlockeDataStorage.SaveData();
         }
 
         [Command("sl_update_match")]
         public async Task UpdateMatch([Remainder]string args) {
             string[] tokens = args.Split(' ');
 
-            Participant p1 = TournamentHelper.GetParticipantByName(tokens[0], SquadlockeGlobal.currentTournament);
-            Participant p2 = TournamentHelper.GetParticipantByName(tokens[1], SquadlockeGlobal.currentTournament);
+            Participant p1 = SquadlockeHelper.GetSquadlockeParticipantByName(tokens[0]);
+            Participant p2 = SquadlockeHelper.GetSquadlockeParticipantByName(tokens[1]);
 
             int score1, score2;
             if (!int.TryParse(tokens[2], out score1)) return;
             if (!int.TryParse(tokens[3], out score2)) return;
 
-            TournamentHelper.UpdateMatch(p1, p2, score1, score2, SquadlockeGlobal.currentTournament);
+            SquadlockeHelper.UpdateMatch(p1, p2, score1, score2);
 
             string msg = "";
             if (score1 > score2)
-                msg = $"{tokens[0]} has defeated {p1.name} {score1}-{score2}";
+                msg = $"{p1.name} has defeated {p2.name} {score1}-{score2}";
             else
                 msg = $"Match has been updated" +
-                    $"{tokens[1]} has taken down {tokens[0]} {score2}-{score1}";
+                    $"{p2.name} has taken down {p2.name} {score2}-{score1}";
 
             await Context.Channel.SendMessageAsync(msg);
+        }
+
+        [Command("sl_start_tournament")]
+        public async Task StartTournamentSL() {
+            SquadlockeHelper.StartTournament();
         }
 
         [Command("sl_vote_on_encounter")]
@@ -115,31 +89,27 @@ namespace Goldbot.Modules {
 
         [Command("sl_show_encounter_list")]
         public async Task ShowEncounterList() {
-            string msg = "```";
-
-            foreach (string location in SquadlockeGlobal.encounters)
-                msg += $"{location}\n";
-
-            msg += "```";
-        }
+            string msg = "There are no additional agreed upon encounters.\nUse \n`!sl_vote_on_encounter [location]`\nto add an encounter to the list";
+            if (!SquadlockeHelper.GetEncounterList().Equals(string.Empty))
+                msg = "```" + SquadlockeHelper.GetEncounterList() + "```";
+            await Context.Channel.SendMessageAsync(msg);
+        } 
 
         [Command("sl_ready_up")]
         public async Task ReadyUp() {
             string callerUsername = Context.Message.Author.Username;
+            bool readySuccess = SquadlockeHelper.ReadyUpSL(callerUsername);
 
-            if (SquadlockeGlobal.ready[callerUsername] == false) {
-                SquadlockeGlobal.ready[callerUsername] = true;
+            if (readySuccess) {
                 EmbedBuilder embed = Utilities.EmbedHelper("Ready", $"{callerUsername} has completed the checkpoint", Context.Message.Author.GetAvatarUrl(), new Color(0, 255, 0));
                 await Context.Channel.SendMessageAsync("", false, embed);
             }
 
-            foreach (string key in SquadlockeGlobal.ready.Keys)
-                if (SquadlockeGlobal.ready[key] == false) return;
-
-            RestUserMessage msg = await Context.Channel.SendMessageAsync("Every particiant is ready. Starting the tournament.");
-
-            TournamentHelper.StartTournament(SquadlockeGlobal.currentTournament);
-            SquadlockeDataStorage.SaveData();
+            if(SquadlockeHelper.AllPlayersReady()) {
+                await Context.Channel.SendMessageAsync($"All participants are ready, starting the tournament" +
+                    $"\n{SquadlockeHelper.GetCurrentTournament().full_challonge_url}");
+                SquadlockeHelper.StartTournament();
+            }
         }
 
         [Command("sl_get_ready_status")]
@@ -148,11 +118,13 @@ namespace Goldbot.Modules {
             Color red = new Color(255, 0, 0);
             Color green = new Color(0, 255, 0);
 
-            foreach(string key in SquadlockeGlobal.ready.Keys) {
+            Dictionary<string, bool> ready = SquadlockeHelper.GetReadyList();
+
+            foreach(string key in ready.Keys) {
                 string imageUrl = "";
                 foreach (SocketGuildUser user in Context.Guild.Users)
                     if (user.Username == key) imageUrl = user.GetAvatarUrl();
-                if (SquadlockeGlobal.ready[key])
+                if (ready[key])
                     embed = Utilities.EmbedHelper($"{key} ready status", $"{key} has completed the checkpoint", imageUrl, green);
                 else
                     embed = Utilities.EmbedHelper($"{key} ready status", $"{key} has not completed the checkpoint", imageUrl, red);
@@ -163,7 +135,7 @@ namespace Goldbot.Modules {
 
         [Command("sl_get_checkpoint_url")]
         public async Task GetCheckpointURL() {
-            await Context.Channel.SendMessageAsync(SquadlockeGlobal.currentTournament.full_challonge_url);
+            await Context.Channel.SendMessageAsync(SquadlockeHelper.GetCurrentTournament().full_challonge_url);
         }
     }
 }

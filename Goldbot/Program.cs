@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord;
 using Goldbot.Global;
+using Goldbot.Modules.CommandHelpers;
 
 namespace Goldbot {
     class Program {
@@ -38,10 +39,9 @@ namespace Goldbot {
                     SquadlockeGlobal.voteNayCount++;
 
                 //Store a tournament object and get the size of the tournament instead of 8
-                if (SquadlockeGlobal.voteYayCount > SquadlockeGlobal.currentTournament.participants_count / 2)
-                    SquadlockeGlobal.encounters.Add(SquadlockeGlobal.routeName);
+                if (SquadlockeGlobal.voteYayCount > SquadlockeHelper.GetCurrentTournament().participants_count / 2)
+                    SquadlockeHelper.AddEncounter(SquadlockeGlobal.routeName);
             }
-            
         }
 
         private async Task Log(LogMessage msg) {
