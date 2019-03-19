@@ -6,7 +6,7 @@ using System.IO;
 namespace Goldbot.Core {
     public static class DataStorage {
         public static void SaveUserAccounts(IEnumerable<UserAccount> accounts, string filePath) {
-            string json = JsonConvert.SerializeObject(accounts);
+            string json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
 
             //wrap in a try catch block later, for error handling.
             File.WriteAllText(filePath, json);
