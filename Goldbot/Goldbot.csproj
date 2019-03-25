@@ -174,7 +174,7 @@
     <Compile Include="Modules\Model\PokeApi\Pokemon\Abilities\AbilityEffectChange.cs" />
     <Compile Include="Modules\Model\PokeApi\Pokemon\Abilities\AbilityFlavorText.cs" />
     <Compile Include="Modules\Model\PokeApi\Pokemon\Abilities\AbilityPokemon.cs" />
-    <Compile Include="Modules\Model\PokeApi\Pokemon\Pokemon\Pokemon.cs" />
+    <Compile Include="Modules\Model\PokeApi\Pokemon\PokemonSpecies\Pokemon.cs" />
     <Compile Include="Modules\Model\PokeApi\Utility\ApiResource.cs" />
     <Compile Include="Modules\Model\PokeApi\Utility\Description.cs" />
     <Compile Include="Modules\Model\PokeApi\Utility\Effect.cs" />

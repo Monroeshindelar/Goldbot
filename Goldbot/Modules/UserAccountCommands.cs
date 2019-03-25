@@ -29,10 +29,16 @@ namespace Goldbot.Modules {
 
         [Command("Set_friend_code")]
         public async Task AddFriendCode([Remainder]string args) {
+            string msg = "";
             UserAccount account = UserAccounts.GetAccount(Context.User);
-            account.friendCode = args;
-            UserAccounts.SaveAccounts();
-            await Context.Channel.SendMessageAsync($"Friend code saved for {Context.User.Username}.\nYou an access peoples friend codes by using\n`!Get_friend_code [mention: username]`");
+            //if (Utilities.CheckFriendCodeValidity(args)) {
+                account.friendCode = args;
+                msg = $"Friend code saved for {Context.User.Username}.\nYou an access peoples friend codes by using\n`!Get_friend_code [mention: username]`";
+            //}
+            //else msg = "Invalid Friend Code. Please check your input and try again";
+
+                UserAccounts.SaveAccounts();
+            await Context.Channel.SendMessageAsync(msg);
         }
 
         [Command("Get_friend_code")]

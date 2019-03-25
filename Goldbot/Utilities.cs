@@ -44,5 +44,21 @@ namespace Goldbot {
                 ini.Add(row.Split('=')[0], string.Join("=", row.Split('=').Skip(1).ToArray()));
             return ini;
         }
+
+        public static bool CheckFriendCodeValidity(string fc) {
+            bool valid = true;
+
+            string[] tokens = fc.Split('-');
+            int i = tokens.Length == 5 ? 1 : 0;
+            int outInt;
+
+            while (i < tokens.Length) {
+                if(!int.TryParse(tokens[i], out outInt)) {
+                    valid = false;
+                    break;
+                }
+            }
+            return valid;
+        }
     }
 }

@@ -94,25 +94,28 @@ namespace Goldbot.Modules.CommandHelpers {
         }
 
         public static void ShuffleSeeds(Tournament tournament) {
-            var request = Utilities.InitRequestWithApiKey($"tournaments/{tournament.name}/participants", Method.GET);
+            //var request = Utilities.InitRequestWithApiKey($"tournaments/{tournament.name}/participants", Method.GET);
 
+            //IRestResponse response = client.Execute(request);
+
+            //List<JsonResponseParticipant> deserialize
+            //    = JsonConvert.DeserializeObject<List<JsonResponseParticipant>>(response.Content);
+
+            //foreach(JsonResponseParticipant deserialized in deserialize) {
+            //    deserialize.Remove(deserialized);
+            //    Random r = new Random();
+            //    int rInt = r.Next(0, deserialize.Count);
+
+            //    JsonResponseParticipant rand = deserialize[rInt];
+            //    deserialize.Remove(rand);
+
+            //    request = Utilities.InitRequestWithApiKey($"tournaments/{tournament.name}/participants/{deserialized.participant.id}", Method.PUT);
+            //    request.AddParameter("participant[seed]", rand.participant.seed);
+            //    response = client.Execute(request);
+
+            //}
+            var request = Utilities.InitRequestWithApiKey($"tournaments/{tournament.name}/participants/randomize", Method.POST);
             IRestResponse response = client.Execute(request);
-
-            List<JsonResponseParticipant> deserialize
-                = JsonConvert.DeserializeObject<List<JsonResponseParticipant>>(response.Content);
-
-            foreach(JsonResponseParticipant deserialized in deserialize) {
-                deserialize.Remove(deserialized);
-                Random r = new Random();
-                int rInt = r.Next(0, deserialize.Count);
-
-                JsonResponseParticipant rand = deserialize[rInt];
-                deserialize.Remove(rand);
-
-                request = Utilities.InitRequestWithApiKey($"tournaments/{tournament.name}/participants/{deserialized.participant.id}", Method.PUT);
-                request.AddParameter("participant[seed]", rand.participant.seed);
-                response = client.Execute(request);
-            }
         }
 
         public static void StartTournament(Tournament tournament) {

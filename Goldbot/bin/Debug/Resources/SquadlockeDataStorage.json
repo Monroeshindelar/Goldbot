@@ -1,14 +1,8 @@
 {
   "currentTournamentName": "PersistentDataTestForSL",
   "ready": {
-    "Jevn": true,
-    "Zanthos": true,
-    "Shmeanut Butter": true,
-    "Rick": true,
-    "Spicy Boi": true,
-    "LottaHOOPLA": true,
-    "Goldbar": true,
-    "LC": true
+    "Goldbar": false,
+    "Goldbot": false
   },
   "encounters": []
 }
