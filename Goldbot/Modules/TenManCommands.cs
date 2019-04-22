@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Goldbot.Global;
 
 namespace Goldbot.Modules {
     public class TenManCommands : ModuleBase<SocketCommandContext> {
@@ -18,10 +19,16 @@ namespace Goldbot.Modules {
             string command = tokens[0].ToLower();
 
             SocketRole master = Context.Guild.Roles.First(x => x.Name == "Monroe"),
-            capA = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team A Captain"),
-            capB = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team B Captain"),
-            teamA = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team A"),
-            teamB = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team B");
+                capA = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team A Captain"),
+                capB = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team B Captain"),
+                teamA = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team A"),
+                teamB = Context.Guild.Roles.FirstOrDefault(x => x.Name == "Team B");
+
+            SocketGuildChannel aChannel = Context.Guild.Channels.FirstOrDefault(c => c.Name == "Team A"),
+                bChannel = Context.Guild.Channels.FirstOrDefault(c => c.Name == "Team B"),
+                mainChannel = Context.Guild.Channels.FirstOrDefault(c => c.Name == "TM General");
+                
+
 
             SocketGuildUser caller = Context.User as SocketGuildUser;
 
@@ -37,48 +44,48 @@ namespace Goldbot.Modules {
                         return;
                     }
                     
-                    Global.TenManGlobal.participants = new List<SocketGuildUser>();
-                    Global.TenManGlobal.mapThumbnails = new Dictionary<string, string>();
-                    Global.TenManGlobal.playersRemaining = new List<string>();
-                    Global.TenManGlobal.mapsRemaining = new List<string>();
+                    TenManGlobal.participants = new List<SocketGuildUser>();
+                    TenManGlobal.mapThumbnails = new Dictionary<string, string>();
+                    TenManGlobal.playersRemaining = new List<string>();
+                    TenManGlobal.mapsRemaining = new List<string>();
 
-                    Global.TenManGlobal.mapsRemaining.Add("mirage"); Global.TenManGlobal.mapsRemaining.Add("cache"); Global.TenManGlobal.mapsRemaining.Add("inferno");
-                    Global.TenManGlobal.mapsRemaining.Add("overpass"); Global.TenManGlobal.mapsRemaining.Add("train"); Global.TenManGlobal.mapsRemaining.Add("nuke");
-                    Global.TenManGlobal.mapsRemaining.Add("dust2");
+                    TenManGlobal.mapsRemaining.Add("mirage"); TenManGlobal.mapsRemaining.Add("cache"); TenManGlobal.mapsRemaining.Add("inferno");
+                    TenManGlobal.mapsRemaining.Add("overpass"); Global.TenManGlobal.mapsRemaining.Add("train"); Global.TenManGlobal.mapsRemaining.Add("nuke");
+                    TenManGlobal.mapsRemaining.Add("dust2");
 
-                    Global.TenManGlobal.mapThumbnails.Add("mirage", "https://vignette.wikia.nocookie.net/cswikia/images/a/a7/CSGO_de_Mirage.jpg/revision/latest?cb=20140316221852");
-                    Global.TenManGlobal.mapThumbnails.Add("cache", "https://www.killping.com/blog/wp-content/uploads/2018/04/Cache.jpg");
-                    Global.TenManGlobal.mapThumbnails.Add("inferno", "https://vignette.wikia.nocookie.net/cswikia/images/f/f0/Inferno.jpg/revision/latest?cb=20161014013320");
-                    Global.TenManGlobal.mapThumbnails.Add("overpass", "https://vignette.wikia.nocookie.net/cswikia/images/6/6e/Csgo-de-overpass.png/revision/latest?cb=20140820130544");
-                    Global.TenManGlobal.mapThumbnails.Add("train", "https://liquipedia.net/commons/images/thumb/5/56/Train_csgo.jpg/600px-Train_csgo.jpg");
-                    Global.TenManGlobal.mapThumbnails.Add("nuke", "https://vignette.wikia.nocookie.net/cswikia/images/5/51/De_nuke_thumbnail.jpg/revision/latest?cb=20180209112248");
-                    Global.TenManGlobal.mapThumbnails.Add("dust2", "https://cdn.vox-cdn.com/thumbor/5668HDDEe6lGfyp96HMJGa7IV6I=/0x0:2560x1600/1200x800/filters:focal(1076x596:1484x1004)/cdn.vox-cdn.com/uploads/chorus_image/image/57107595/csgo_dust2.0.jpg");
+                    TenManGlobal.mapThumbnails.Add("mirage", "https://vignette.wikia.nocookie.net/cswikia/images/a/a7/CSGO_de_Mirage.jpg/revision/latest?cb=20140316221852");
+                    TenManGlobal.mapThumbnails.Add("cache", "https://www.killping.com/blog/wp-content/uploads/2018/04/Cache.jpg");
+                    TenManGlobal.mapThumbnails.Add("inferno", "https://vignette.wikia.nocookie.net/cswikia/images/f/f0/Inferno.jpg/revision/latest?cb=20161014013320");
+                    TenManGlobal.mapThumbnails.Add("overpass", "https://vignette.wikia.nocookie.net/cswikia/images/6/6e/Csgo-de-overpass.png/revision/latest?cb=20140820130544");
+                    TenManGlobal.mapThumbnails.Add("train", "https://liquipedia.net/commons/images/thumb/5/56/Train_csgo.jpg/600px-Train_csgo.jpg");
+                    TenManGlobal.mapThumbnails.Add("nuke", "https://vignette.wikia.nocookie.net/cswikia/images/5/51/De_nuke_thumbnail.jpg/revision/latest?cb=20180209112248");
+                    TenManGlobal.mapThumbnails.Add("dust2", "https://cdn.vox-cdn.com/thumbor/5668HDDEe6lGfyp96HMJGa7IV6I=/0x0:2560x1600/1200x800/filters:focal(1076x596:1484x1004)/cdn.vox-cdn.com/uploads/chorus_image/image/57107595/csgo_dust2.0.jpg");
 
                     foreach (SocketUser participant in Context.Message.MentionedUsers) {
-                        Global.TenManGlobal.participants.Add(participant as SocketGuildUser);
-                        Global.TenManGlobal.playersRemaining.Add(participant.Username);
+                        TenManGlobal.participants.Add(participant as SocketGuildUser);
+                        TenManGlobal.playersRemaining.Add(participant.Username);
                     }
                     string rp = "";
-                    foreach (string playername in Global.TenManGlobal.playersRemaining) rp += playername + "\n";
+                    foreach (string playername in TenManGlobal.playersRemaining) rp += playername + "\n";
                     string rm = "";
-                    foreach (string mapname in Global.TenManGlobal.mapsRemaining) rm += mapname + "\n";
+                    foreach (string mapname in TenManGlobal.mapsRemaining) rm += mapname + "\n";
 
                     RestUserMessage remainingPlayers = await Context.Channel.SendMessageAsync("```css\nRemaining Players:\n" + rp + "```");
                     RestUserMessage teamACompositionMessage = await Context.Channel.SendMessageAsync("```css\nTeam A: ```");
                     RestUserMessage teamBCompositionMessage = await Context.Channel.SendMessageAsync("```css\nTeam B: ```");
                     RestUserMessage remainingMapMessage = await (Context.Channel.SendMessageAsync("```css\nMaps Remaining:\n" + rm + "```"));
                     RestUserMessage mapPickBanMessage = await Context.Channel.SendMessageAsync("```css\nMap Pick/Ban: ```");
-                    Global.TenManGlobal.TeamAMessageID = teamACompositionMessage.Id;
-                    Global.TenManGlobal.TeamBMessageID = teamBCompositionMessage.Id;
-                    Global.TenManGlobal.MapPickMessaegID = mapPickBanMessage.Id;
-                    Global.TenManGlobal.RemainingPlayersMessageID = remainingPlayers.Id;
-                    Global.TenManGlobal.RemainingMapsMessageID = remainingMapMessage.Id;
-                    Global.TenManGlobal.IsBanPhase = true;
-                    Global.TenManGlobal.TeamATurn = true;
+                    TenManGlobal.TeamAMessageID = teamACompositionMessage.Id;
+                    TenManGlobal.TeamBMessageID = teamBCompositionMessage.Id;
+                    TenManGlobal.MapPickMessaegID = mapPickBanMessage.Id;
+                    TenManGlobal.RemainingPlayersMessageID = remainingPlayers.Id;
+                    TenManGlobal.RemainingMapsMessageID = remainingMapMessage.Id;
+                    TenManGlobal.IsBanPhase = true;
+                    TenManGlobal.TeamATurn = true;
                     SocketRole[] roles = { teamA, teamB, capA, capB };
                     break;
                 case "free":
-                    if (Global.TenManGlobal.participants.Count == 0) {
+                    if (TenManGlobal.participants.Count == 0) {
                         await Context.Channel.SendMessageAsync("A pug has not been instantiated. There is nothing to free.\nPlease initialize a game using the init command before calling free.");
                         return;
                     }
@@ -87,39 +94,50 @@ namespace Goldbot.Modules {
                     foreach (SocketGuildUser participant in Global.TenManGlobal.participants) {
                         await participant.RemoveRolesAsync(rolesToRemove);
                     }
-                    Global.TenManGlobal.participants = null;
+                    TenManGlobal.participants = null;
                     await Context.Channel.SendMessageAsync("Players freed.");
                     break;
                 case "pickcaptains":
-                    if (Global.TenManGlobal.participants.Count < 10) {
+                    if (TenManGlobal.participants.Count < 10) {
                         await Context.Channel.SendMessageAsync("A pug has not been instantiated. \nCaptains cannot be selected. \nPlease initialize a game using the init command before trying to pick captains");
                         return;
                     }
                     Random r = new Random();
                     int capAIndex = r.Next(0, Global.TenManGlobal.participants.Count);
-                    SocketGuildUser cap = Global.TenManGlobal.participants[0];
+                    SocketGuildUser cap = Context.Message.MentionedUsers.Count != 2 ? Global.TenManGlobal.participants[capAIndex]
+                        : (SocketGuildUser) Context.Message.MentionedUsers.ElementAt(0);
                     embed = EmbedHelper("Team A Captain: ", cap.Username, cap.GetAvatarUrl(), new Color(255, 0, 0));
                     await Context.Channel.SendMessageAsync("", false, embed);
                     await cap.AddRoleAsync(capA);
                     var msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.TeamAMessageID)) as RestUserMessage;
-                    await msg.ModifyAsync(x => x.Content = "```" + msg.Content.ToString().Trim(new char[] { '`' }) + "\n" + cap.Username + "```");
+                    await msg.ModifyAsync(x => x.Content = "```" + msg.Content.ToString().Trim(new char[] { '`' }) + "\n" + cap.Username + " - Captain ```");
 
-                    Global.TenManGlobal.playersRemaining.Remove(cap.Username);
+                    await cap.ModifyAsync(x => {
+                        x.ChannelId = aChannel.Id;
+                    });
+
+                    TenManGlobal.playersRemaining.Remove(cap.Username);
 
                     int capBIndex = capAIndex;
                     while (capBIndex == capAIndex) capBIndex = r.Next(0, Global.TenManGlobal.participants.Count);
-                    cap = Global.TenManGlobal.participants[capBIndex];
+                    cap = Context.Message.MentionedUsers.Count != 2 ? Global.TenManGlobal.participants[capBIndex]
+                        : (SocketGuildUser)Context.Message.MentionedUsers.ElementAt(1);
                     embed = EmbedHelper("Team B Captain: ", cap.Username, cap.GetAvatarUrl(), new Color(0, 0, 255));
                     await Context.Channel.SendMessageAsync("", false, embed);
                     await cap.AddRoleAsync(capB);
 
                     msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.TeamBMessageID)) as RestUserMessage;
                     await msg.ModifyAsync(x => x.Content = "```" + msg.Content.ToString().Trim(new char[] { '`' }) + "\n" + cap.Username + " - Captain" + "```");
-                    Global.TenManGlobal.playersRemaining.Remove(cap.Username);
+
+                    await cap.ModifyAsync(x => {
+                        x.ChannelId = bChannel.Id;
+                    });
+
+                    TenManGlobal.playersRemaining.Remove(cap.Username);
 
                     rp = "";
-                    foreach (string playername in Global.TenManGlobal.playersRemaining) rp += playername + "\n";
-                    msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.RemainingPlayersMessageID)) as RestUserMessage;
+                    foreach (string playername in TenManGlobal.playersRemaining) rp += playername + "\n";
+                    msg = await (Context.Channel.GetMessageAsync(TenManGlobal.RemainingPlayersMessageID)) as RestUserMessage;
                     await msg.ModifyAsync(x => x.Content = "```css\nPlayers Remaining:\n" + rp + "```");
                     break;
                 case "pickplayer":
@@ -129,15 +147,15 @@ namespace Goldbot.Modules {
                     }
                     if (tokens.Length == 1) return;
 
-                    if(a && !Global.TenManGlobal.TeamATurn) {
+                    if(a && !TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team B's turn to pick a player.\nPlease wait your turn.");
                         return;
-                    } else if(!a && Global.TenManGlobal.TeamATurn) {
+                    } else if(!a && TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team A's turn to pick a player.\nPlease wait your turn.");
                         return;
                     }
                     
-                    if(Global.TenManGlobal.playersRemaining.Count() == 0) {
+                    if(TenManGlobal.playersRemaining.Count() == 0) {
                         await Context.Channel.SendMessageAsync("All the players have been picked.\nIt's time to start the pick/ban phase.\nTo start banning and picking maps use the banmap and pickmap commands.\nThe pick ban order is B-B-P-P-B-B");
                         return;
                     }
@@ -145,9 +163,16 @@ namespace Goldbot.Modules {
                     var pick = Context.Message.MentionedUsers.First();
 
                     var user = pick as SocketGuildUser;
+
+                    ulong id = a ? aChannel.Id : bChannel.Id;
+
+                    await user.ModifyAsync(x => {
+                        x.ChannelId = id;
+                    });
+
                     if (user.Roles.Contains(teamB) || user.Roles.Contains(capB)
                         || user.Roles.Contains(teamA) || user.Roles.Contains(capA) || 
-                        !Global.TenManGlobal.participants.Contains(user)) 
+                        !TenManGlobal.participants.Contains(user)) 
                     {
                         await Context.Channel.SendMessageAsync(pick.Username + " is unavailable.");
                         return;
@@ -156,26 +181,26 @@ namespace Goldbot.Modules {
                     if (a) await (pick as IGuildUser).AddRoleAsync(teamA);
                     else await (pick as IGuildUser).AddRoleAsync(teamB);
 
-                    Global.TenManGlobal.playersRemaining.Remove(pick.Username);
+                    TenManGlobal.playersRemaining.Remove(pick.Username);
 
                     embed = EmbedHelper((a ? "Team A Picked: " : "Team B Picked:"), pick.Username, pick.GetAvatarUrl(), (a ? new Color(255, 0, 0) : new Color(0, 0, 255)));
                     await Context.Channel.SendMessageAsync("", false, embed);
 
                     RestUserMessage message;
-                    if (a) message = await Context.Channel.GetMessageAsync(Global.TenManGlobal.TeamAMessageID) as RestUserMessage;
-                    else message = await Context.Channel.GetMessageAsync(Global.TenManGlobal.TeamBMessageID) as RestUserMessage;
+                    if (a) message = await Context.Channel.GetMessageAsync(TenManGlobal.TeamAMessageID) as RestUserMessage;
+                    else message = await Context.Channel.GetMessageAsync(TenManGlobal.TeamBMessageID) as RestUserMessage;
                     await message.ModifyAsync(x => x.Content = "```" + message.Content.ToString().Trim(new char[] { '`' }) + "\n" + pick.Username + "```");
 
                     rp = "";
-                    foreach (string playername in Global.TenManGlobal.playersRemaining) rp += playername + "\n";
-                    msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.RemainingPlayersMessageID)) as RestUserMessage;
+                    foreach (string playername in TenManGlobal.playersRemaining) rp += playername + "\n";
+                    msg = await (Context.Channel.GetMessageAsync(TenManGlobal.RemainingPlayersMessageID)) as RestUserMessage;
                     await msg.ModifyAsync(x => x.Content = "```css\nPlayers Remaining:\n" + rp + "```");
 
-                    if (Global.TenManGlobal.playersRemaining.Count() == 0) {
+                    if (TenManGlobal.playersRemaining.Count() == 0) {
                         await Context.Channel.SendMessageAsync("All player have been pick.\nBegin the map pick/ban phase");
-                        Global.TenManGlobal.IsBanPhase = true;
+                        TenManGlobal.IsBanPhase = true;
                     }
-                    Global.TenManGlobal.TeamATurn = !Global.TenManGlobal.TeamATurn; 
+                    TenManGlobal.TeamATurn = !TenManGlobal.TeamATurn; 
                     break;
                 case "pickmap":
                     if (!(caller.Roles.Contains(master) || caller.Roles.Contains(capA) || caller.Roles.Contains(capB))) {
@@ -183,54 +208,54 @@ namespace Goldbot.Modules {
                         return;
                     }
                     string mappick = tokens[1].ToLower();
-                    if (!Global.TenManGlobal.mapThumbnails.ContainsKey(mappick)) {
+                    if (!TenManGlobal.mapThumbnails.ContainsKey(mappick)) {
                         await Context.Channel.SendMessageAsync(mappick + " does not exist in the competitive pool.");
                         return;
                     }
 
-                    if(Global.TenManGlobal.mapsRemaining.Count <= 1) {
+                    if(TenManGlobal.mapsRemaining.Count <= 1) {
                         await Context.Channel.SendMessageAsync("Map pick/ban phase is over.\nYou can start the game now.");
                         return;
                     }
 
-                    if (Global.TenManGlobal.playersRemaining.Count() != 0) {
+                    if (TenManGlobal.playersRemaining.Count() != 0) {
                         await Context.Channel.SendMessageAsync("It is currently still the player pick stage.\nPlease wait for all players to be picked before moving on to the map pick/ban phase");
                     }
 
-                    if(Global.TenManGlobal.IsBanPhase) {
+                    if(TenManGlobal.IsBanPhase) {
                         await Context.Channel.SendMessageAsync("It is currently the ban phase.\nPlease wait for both teams to ban their maps before picking a map.");
                         return;
                     }
 
-                    if(!Global.TenManGlobal.mapsRemaining.Contains(mappick)) {
+                    if(!TenManGlobal.mapsRemaining.Contains(mappick)) {
                         await Context.Channel.SendMessageAsync(mappick + " has already been selected.\nPlease select another map.");
                         return;
                     }
 
-                    if (a && !Global.TenManGlobal.TeamATurn) {
+                    if (a && !TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team B's turn to pick a map.\nPlease wait your turn to pick a map.");
                         return;
                     }
-                    else if (!a && Global.TenManGlobal.TeamATurn) {
+                    else if (!a && TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team A's turn to pick a map.\nPlease wait your turn to pick a map.");
                         return;
                     }
 
-                    embed = EmbedHelper((a ? "Team A Picked: " : "Team B Picked: "), mappick, Global.TenManGlobal.mapThumbnails[mappick], new Color(0, 255, 0)); ;
+                    embed = EmbedHelper((a ? "Team A Picked: " : "Team B Picked: "), mappick, TenManGlobal.mapThumbnails[mappick], new Color(0, 255, 0)); ;
                     await Context.Channel.SendMessageAsync("", false, embed);
 
-                    Global.TenManGlobal.mapsRemaining.Remove(mappick);
+                    TenManGlobal.mapsRemaining.Remove(mappick);
 
-                    RestUserMessage mapPickMessage = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.MapPickMessaegID)) as RestUserMessage;
+                    RestUserMessage mapPickMessage = await (Context.Channel.GetMessageAsync(TenManGlobal.MapPickMessaegID)) as RestUserMessage;
                     await mapPickMessage.ModifyAsync(x => x.Content = "```" + mapPickMessage.Content.ToString().Trim(new char[] { '`' }) + "\n" + mappick +" - Picked by " + (a ? "Team A" : "Team B") + "```");
 
                     rm = "";
-                    foreach (string mapname in Global.TenManGlobal.mapsRemaining) rm += mapname + "\n";
-                    msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.RemainingMapsMessageID)) as RestUserMessage;
+                    foreach (string mapname in TenManGlobal.mapsRemaining) rm += mapname + "\n";
+                    msg = await (Context.Channel.GetMessageAsync(TenManGlobal.RemainingMapsMessageID)) as RestUserMessage;
                     await msg.ModifyAsync(x => x.Content = "```css\nRemaining Maps:\n" + rm + "```");
 
-                    if (!a) Global.TenManGlobal.IsBanPhase = true;
-                    Global.TenManGlobal.TeamATurn = !Global.TenManGlobal.TeamATurn;
+                    if (!a) TenManGlobal.IsBanPhase = true;
+                    TenManGlobal.TeamATurn = !TenManGlobal.TeamATurn;
                     break;
                 case "banmap":
                     if (!(caller.Roles.Contains(master) || caller.Roles.Contains(capA) || caller.Roles.Contains(capB))) {
@@ -238,65 +263,83 @@ namespace Goldbot.Modules {
                         return;
                     }
 
-                    if(Global.TenManGlobal.mapsRemaining.Count() <= 1) {
+                    if(TenManGlobal.mapsRemaining.Count() <= 1) {
                         await Context.Channel.SendMessageAsync("Map pick/ban phase is over.\nYou can start the game now.");
                         return;
                     }
 
-                    if (Global.TenManGlobal.playersRemaining.Count() != 0) {
+                    if (TenManGlobal.playersRemaining.Count() != 0) {
                         await Context.Channel.SendMessageAsync("It is currently still the player pick stage.\nPlease wait for all players to be picked before moving on to the map pick/ban phase");
                         return;
                     }
 
-                    if (!Global.TenManGlobal.IsBanPhase) {
+                    if (!TenManGlobal.IsBanPhase) {
                         await Context.Channel.SendMessageAsync("It is currently the pick phase.\nPlease wait for both teams to pick their maps before banning a map.");
                         return;
                     }
 
-                    if(a && !Global.TenManGlobal.TeamATurn) {
+                    if(a && !TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team B's turn to ban a map.\nPlease wait your turn to ban a map.");
                         return;
-                    } else if (!a && Global.TenManGlobal.TeamATurn) {
+                    } else if (!a && TenManGlobal.TeamATurn) {
                         await Context.Channel.SendMessageAsync("It is currently Team A's turn to ban a map.\nPlease wait your turn to ban a map.");
                         return;
                     }
 
                     string mapban = tokens[1].ToLower();
-                    if (!Global.TenManGlobal.mapThumbnails.ContainsKey(mapban)) {
+                    if (!TenManGlobal.mapThumbnails.ContainsKey(mapban)) {
                         await Context.Channel.SendMessageAsync(mapban + " does not exist in the competitive pool.");
                         return;
                     }
 
-                    if(!Global.TenManGlobal.mapsRemaining.Contains(mapban)) {
+                    if(!TenManGlobal.mapsRemaining.Contains(mapban)) {
                         await Context.Channel.SendMessageAsync(mapban + " has already been selected.\nPlease select another map.");
                         return;
                     }
 
-                    embed = EmbedHelper((a ? "Team A Banned: " : "Team B Banned: "), mapban, Global.TenManGlobal.mapThumbnails[mapban], new Color(255, 0, 0));;
+                    embed = EmbedHelper((a ? "Team A Banned: " : "Team B Banned: "), mapban, TenManGlobal.mapThumbnails[mapban], new Color(255, 0, 0));;
                     await Context.Channel.SendMessageAsync("", false, embed);
 
-                    Global.TenManGlobal.mapsRemaining.Remove(mapban);
+                    TenManGlobal.mapsRemaining.Remove(mapban);
 
-                    RestUserMessage mapBanMessage = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.MapPickMessaegID)) as RestUserMessage;
+                    RestUserMessage mapBanMessage = await (Context.Channel.GetMessageAsync(TenManGlobal.MapPickMessaegID)) as RestUserMessage;
                     await mapBanMessage.ModifyAsync(x => x.Content = "```" + mapBanMessage.Content.ToString().Trim(new char[] { '`' }) + "\n" + mapban + " - Banned by " + (a ? "Team A" : "Team B") + "```");
 
                     rm = "";
-                    foreach (string mapname in Global.TenManGlobal.mapsRemaining) rm += mapname + "\n";
+                    foreach (string mapname in TenManGlobal.mapsRemaining) rm += mapname + "\n";
 
-                    msg = await (Context.Channel.GetMessageAsync(Global.TenManGlobal.RemainingMapsMessageID)) as RestUserMessage;
+                    msg = await (Context.Channel.GetMessageAsync(TenManGlobal.RemainingMapsMessageID)) as RestUserMessage;
                     await msg.ModifyAsync(x => x.Content = "```css\nRemaining Maps:\n" + rm + "```");
 
-                    if (!a) Global.TenManGlobal.IsBanPhase = false;
-                    Global.TenManGlobal.TeamATurn = !Global.TenManGlobal.TeamATurn;
+                    if (!a) TenManGlobal.IsBanPhase = false;
+                    TenManGlobal.TeamATurn = !TenManGlobal.TeamATurn;
 
-                    if(Global.TenManGlobal.mapsRemaining.Count == 1) {
-                        string name = Global.TenManGlobal.mapsRemaining.First();
-                        embed = EmbedHelper("Decider: ", name, Global.TenManGlobal.mapThumbnails[name], new Color(0, 255, 0));
+                    if(TenManGlobal.mapsRemaining.Count == 1) {
+                        string name = TenManGlobal.mapsRemaining.First();
+                        embed = EmbedHelper("Decider: ", name, TenManGlobal.mapThumbnails[name], new Color(0, 255, 0));
                         await Context.Channel.SendMessageAsync("", false, embed);
-                        RestUserMessage decider = (await Context.Channel.GetMessageAsync(Global.TenManGlobal.MapPickMessaegID)) as RestUserMessage;
+                        RestUserMessage decider = (await Context.Channel.GetMessageAsync(TenManGlobal.MapPickMessaegID)) as RestUserMessage;
+                        string greeterString = string.Empty;
+                        var currentDate = DateTime.Now;
+                        greeterString += "https://popflash.site/scrim/TenMan" + currentDate.ToString("yyyyMMddTHH:mm:ssZ");
                         await decider.ModifyAsync(x => x.Content = "```" + decider.Content.ToString().Trim(new char[] { '`' }) + "\n" + name + " - Decider Map ```");
-                        await Context.Channel.SendMessageAsync("Map pick/ban phase is completed.\nJoin your respective voice channels and begin the game!");
+                        await Context.Channel.SendMessageAsync($"Map pick/ban phase is completed.\nGet ready to start the game. Join the server here:\n{greeterString}");
                     }
+                    break;
+                case "endgame":
+                    foreach(SocketGuildUser u in TenManGlobal.participants) {
+                        await u.ModifyAsync(x => {
+                            x.ChannelId = mainChannel.Id;
+                        });
+                    }
+                    string greeterMessage = "Game has been finished. Everyone will be moved back to the main channel.";
+                    bool includeNextPopflashLink = (tokens.Length >= 2 && tokens[1] == "-y") ? true : false;
+                    if (includeNextPopflashLink) {
+                        var date = DateTime.Now;
+                        greeterMessage += "When everyone is ready to start the next game, join your channels and follow this link:\n"
+                            + "https://popflash.site/scrim/TenMan" + date.ToString("yyyyMMddTHH:mm:ssZ");
+                    }
+                    await Context.Channel.SendMessageAsync(greeterMessage);
                     break;
                 default:
                     await Context.Channel.SendMessageAsync("Command is not recognized.");
